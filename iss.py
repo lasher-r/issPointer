@@ -9,6 +9,10 @@ MAX_QUEUE_SIZE = 3600  # one hour of data
 positionsQueue = queue.Queue(MAX_QUEUE_SIZE)
 
 
+# get satellite data from api.  25544 is the iss code
+# altitude in meters. 
+# gets secs worth of data.
+# puts it into the position queue
 def getSatellitePos(obsLat, obsLng, obsAlt, satId="25544", secs="60"):
     while 1:
             # id #lat #lng #alt #secs
@@ -22,6 +26,9 @@ def getSatellitePos(obsLat, obsLng, obsAlt, satId="25544", secs="60"):
         time.sleep(2 * int(secs) / 3)
 
 
+# Consumes data from the positions queue.
+# gets azimuth and altitude for current time.
+# 
 def pointerLoop():
     pos = positionsQueue.get()
     while 1:
@@ -34,13 +41,16 @@ def pointerLoop():
 if __name__ == '__main__':
     denLat = "39.910154"
     denLng = "-105.073380"
-    denAlt = "1609"
+    denAlt = "1609"  # meters
 
+    # production thread from api
     apiThread = threading.Thread(target=getSatellitePos, args=(denLat, denLng, denAlt,))
     apiThread.start()
 
+    # consume on main thread
     pointerLoop()
 
+    # never get here
     apiThread.join()
 
     print(positionsQueue.qsize())
