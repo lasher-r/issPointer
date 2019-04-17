@@ -5,8 +5,8 @@ import threading
 import time
 
 api_key = os.environ['ISS_API_KEY']
-# todo set max size for queue
-positionsQueue = queue.SimpleQueue()
+MAX_QUEUE_SIZE = 3600  # one hour of data
+positionsQueue = queue.Queue(MAX_QUEUE_SIZE)
 
 
 def getSatellitePos(obsLat, obsLng, obsAlt, satId="25544", secs="60"):
@@ -28,7 +28,7 @@ def pointerLoop():
         time.sleep(1)
         while int(time.time()) != pos['timestamp']:
             pos = positionsQueue.get()
-        print("{} {}".format(pos, int(time.time())))
+        print("az: {}\talt: {}\tts: {}".format(pos['azimuth'], pos['elevation'], pos['timestamp']))
 
 
 if __name__ == '__main__':
