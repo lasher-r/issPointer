@@ -1,8 +1,10 @@
 import os
 import queue
 import requests
+import sys
 import threading
 import time
+
 
 api_key = os.environ['ISS_API_KEY']
 MAX_QUEUE_SIZE = 3600  # one hour of data
@@ -27,7 +29,7 @@ def getSatellitePos(obsLat, obsLng, obsAlt, satId="25544", secs="60"):
 
 
 # Consumes data from the positions queue.
-# gets azimuth and altitude for current time.
+# gets azimuth and elevation for current time.
 # 
 def pointerLoop():
     pos = positionsQueue.get()
@@ -35,8 +37,7 @@ def pointerLoop():
         time.sleep(1)
         while int(time.time()) != pos['timestamp']:
             pos = positionsQueue.get()
-        print("az: {}\talt: {}\tts: {}".format(pos['azimuth'], pos['elevation'], pos['timestamp']))
-
+        print("az: {}\tele: {}\tts: {}".format(pos['azimuth'], pos['elevation'], pos['timestamp']))
 
 if __name__ == '__main__':
     denLat = "39.910154"
