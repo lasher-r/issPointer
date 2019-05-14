@@ -1,0 +1,14 @@
+[Unit]
+Description=Point to the space station
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/lib/systemd/system/iss.env
+User=pi
+ExecStart=/home/pi/issPointer/iss.py
+
+[Install]
+WantedBy=multi-user.target
+
